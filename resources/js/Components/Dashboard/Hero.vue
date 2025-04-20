@@ -1,5 +1,25 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 
+interface Props {
+    filters?: {
+        search?: string;
+        location?: string;
+    }
+}
+const props = defineProps<Props>();
+const jobKeyword = ref(props.filters?.search || '');
+const locationKeyword = ref(props.filters?.location || '');
+
+// Function to handle search
+const handleSearch = () => {
+    router.get('/dashboard', {
+        search: jobKeyword.value,
+        location: locationKeyword.value
+    });
+};
+</script>
 <template>
     <div class="bg-slate-100 relative">
         <div class="container py-32 text-center flex flex-col gap-8 relative">
@@ -21,7 +41,8 @@
                                     d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                             </svg>
                         </span>
-                        <input placeholder="Job title or keyword"
+                        <input placeholder="Job title or keyword" v-model="jobKeyword"
+                            @input="e => jobKeyword = (e.target as HTMLInputElement).value"
                             class="py-4 shadow-none border-none focus:outline-none focus:ring-0 outline-none ring-0"
                             type="text">
                     </div>
@@ -35,11 +56,13 @@
                                     d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                             </svg>
                         </span>
-                        <input placeholder="Location"
+                        <input placeholder="Location" v-model="locationKeyword"
+                            @input="e => locationKeyword = (e.target as HTMLInputElement).value"
                             class="py-4 shadow-none border-none focus:outline-none focus:ring-0 outline-none ring-0"
                             type="text">
                     </div>
-                    <button class="bg-brand px-6 text-sm font-medium py-2 rounded-full text-white mr-3">Find
+                    <button @click="handleSearch"
+                        class="bg-brand px-6 text-sm font-medium py-2 rounded-full text-white mr-3">Find
                         jobs</button>
                 </div>
             </div>
